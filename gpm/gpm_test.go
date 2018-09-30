@@ -1,20 +1,45 @@
-package gpm
+package gpm // import "github.com/dynamicgo/dy/gpm"
 
 import (
 	"encoding/json"
 	"go/build"
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 )
 
 func TestGoBuild(t *testing.T) {
-	pkg, err := build.Import("github.com/dynamicgo/dy/gpm", "./test", build.IgnoreVendor)
+	pkg, err := build.ImportDir("./", build.IgnoreVendor|build.ImportComment)
 	require.NoError(t, err)
 
 	println(printResult(pkg))
 	println(printResult(build.Default.SrcDirs()))
 
+	println(pkg.Dir)
+
+}
+
+func TestWalker(t *testing.T) {
+
+	walker := NewWalker()
+
+	err := walker.Import("./", true)
+
+	require.NoError(t, err)
+
+	packages := walker.Packages()
+
+	for _, pkg := range packages {
+		println("find package: ", pkg.Name, pkg.ImportPath)
+	}
+
+}
+
+func TestPath(t *testing.T) {
+	path, _ := filepath.Abs("./")
+
+	println(path)
 }
 
 func printResult(val interface{}) string {
