@@ -20,11 +20,11 @@ func NewWalker() Walker {
 }
 
 func (impl *walkerImpl) imported(key string) (*build.Package, bool) {
-
+	return nil, false
 }
 
 func (impl *walkerImpl) importedDir(key string) (*build.Package, bool) {
-
+	return nil, false
 }
 
 func (impl *walkerImpl) Import(dir string, recursion bool) error {
