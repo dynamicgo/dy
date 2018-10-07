@@ -58,7 +58,7 @@ func (impl *walkerImpl) Import(dir string, recursion bool) error {
 		return nil
 	}
 
-	pkg, err = impl.importDir(dir)
+	pkg, err = impl.importDir(path)
 
 	if err != nil {
 		return xerrors.Wrapf(err, "get package from dir %s error", dir)
