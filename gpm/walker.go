@@ -20,11 +20,11 @@ func NewWalker() Walker {
 }
 
 func (impl *walkerImpl) imported(key string) (*build.Package, bool) {
-
+	return nil, false
 }
 
 func (impl *walkerImpl) importedDir(key string) (*build.Package, bool) {
-
+	return nil, false
 }
 
 func (impl *walkerImpl) Import(dir string, recursion bool) error {
@@ -43,7 +43,7 @@ func (impl *walkerImpl) Import(dir string, recursion bool) error {
 
 	var fifo []string
 
-	pkg, err := impl.importDir(dir)
+	pkg, err := impl.importDir(path)
 
 	if err != nil {
 		return xerrors.Wrapf(err, "get package from dir %s error", dir)
@@ -67,8 +67,6 @@ func (impl *walkerImpl) Import(dir string, recursion bool) error {
 		if ok {
 			continue
 		}
-
-		
 
 	}
 
