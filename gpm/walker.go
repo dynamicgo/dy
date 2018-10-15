@@ -1,3 +1,4 @@
+// Package gpm the unofficial golang package/project manager
 package gpm
 
 import (
@@ -12,19 +13,58 @@ import (
 type walkerImpl struct {
 	slf4go.Logger
 	packages []*build.Package
+	skipped  []string
+}
+
+// Option .
+type Option func(impl *walkerImpl)
+
+// WithSkip .
+func WithSkip(packages []string) Option {
+	return func(impl *walkerImpl) {
+		impl.skipped = packages
+	}
 }
 
 // NewWalker create package walker object
-func NewWalker() Walker {
-	return &walkerImpl{}
+func NewWalker(options ...Option) Walker {
+	impl := &walkerImpl{}
+
+	for _, opt := range options {
+		opt(impl)
+	}
+
+	return impl
 }
 
 func (impl *walkerImpl) imported(key string) (*build.Package, bool) {
+	for _, pkg := range impl.packages {
+		if pkg.Name == key {
+			return pkg, true
+		}
+	}
+
 	return nil, false
 }
 
 func (impl *walkerImpl) importedDir(key string) (*build.Package, bool) {
+	for _, pkg := range impl.packages {
+		if pkg.ImportPath == key {
+			return pkg, true
+		}
+	}
+
 	return nil, false
+}
+
+func (impl *walkerImpl) skip(key string) bool {
+	for _, pkg := range impl.skipped {
+		if pkg == key {
+			return true
+		}
+	}
+
+	return false
 }
 
 func (impl *walkerImpl) Import(dir string, recursion bool) error {
@@ -67,6 +107,20 @@ func (impl *walkerImpl) Import(dir string, recursion bool) error {
 		if ok {
 			continue
 		}
+
+		if impl.skip(top) {
+			continue
+		}
+
+		pkg, err := impl.importPackage(top)
+
+		if err != nil {
+			return err
+		}
+
+		impl.packages = append(impl.packages, pkg)
+
+		fifo = append(fifo, pkg.Imports...)
 
 	}
 

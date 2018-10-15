@@ -22,9 +22,9 @@ func TestGoBuild(t *testing.T) {
 
 func TestWalker(t *testing.T) {
 
-	walker := NewWalker()
+	walker := NewWalker(WithSkip([]string{"C"}))
 
-	err := walker.Import("./", true)
+	err := walker.Import("/Users/yayanyang/Workspace/src/cjoy.tech/cjpool", true)
 
 	require.NoError(t, err)
 
@@ -32,6 +32,8 @@ func TestWalker(t *testing.T) {
 
 	for _, pkg := range packages {
 		println("find package: ", pkg.Name, pkg.ImportPath)
+
+		// println(printResult(pkg.Imports))
 	}
 
 }
